@@ -1,3 +1,3 @@
-nginx
-mern stack
-docker compose
+nginx </br >
+mern stack </br >
+docker compose 
