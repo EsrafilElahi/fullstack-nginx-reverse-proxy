@@ -1,0 +1,43 @@
+{
+  "name": "mern-stack",
+  "version": "1.0.0",
+  "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
+  "main": "start.js",
+  "scripts": {
+    "postinstall": "node start install-children",
+    "start": "node start server:client:mobile",
+    "server:client": "node start server:client",
+    "server:mobile": "node start server:mobile",
+    "client": "node start client",
+    "mobile": "node start mobile",
+    "server": "node start server",
+    "test": "node start test",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t-ho/mern-stack.git"
+  },
+  "author": "t-ho <t.ho@tdev.app>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/t-ho/mern-stack/issues"
+  },
+  "homepage": "https://tdev.app/mern-stack",
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "concurrently": "^7.0.0",
+    "dotenv": "^16.0.0",
+    "figlet": "^1.5.2",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
+    "lodash": "^4.17.21",
+    "ngrok": "^4.3.0",
+    "prettier": "^2.5.1",
+    "tree-kill": "^1.2.2"
+  },
+  "dependencies": {},
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
+}
