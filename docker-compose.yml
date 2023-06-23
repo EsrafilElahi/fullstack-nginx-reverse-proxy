@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27018:27017'
+
+  api-server:
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+    volumes:
+      - /mern-stack/server/node_modules
+      - ./server:/mern-stack/server
+    environment:
+      - MONGO_URI=mongodb://mongo/merndb
+    ports:
+      - '${SERVER_PORT}:${SERVER_PORT}'
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile
+    volumes:
+      - /mern-stack/client/node_modules
+      - ./client:/mern-stack/client
+    stdin_open: true # FIXME: https://github.com/facebook/create-react-app/issues/8688
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      - api-server
+
+  nginx-proxy:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./nginx-proxy/Dockerfile
+    ports:
+      - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
+    environment:
+      - NGINX_LE_PLACEHOLDER_1=${PORT}
+      - NGINX_LE_PLACEHOLDER_2=${SERVER_PORT}
+      - NGINX_LE_PLACEHOLDER_3=${NGINX_PROXY_PORT}
+      - NGINX_LE_TZ
+    depends_on:
+      - api-server
+      - client
