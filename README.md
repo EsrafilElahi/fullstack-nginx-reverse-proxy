@@ -1,3 +1,3 @@
-nginx </br >
+nginx reverse proxy </br >
 mern stack </br >
 docker compose 
