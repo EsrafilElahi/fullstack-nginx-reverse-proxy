@@ -1,0 +1,94 @@
+# Specify file cache expiration.
+include h5bp/web_performance/cache_expiration.conf;
+
+upstream client-cluster {
+  server client:3000;
+}
+
+upstream api-server-cluster {
+  server api-server:8000;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  # this code nothing response (beacuse of default_server exists)
+  return 444;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  
+  server_name esrafil.com;
+
+  # this code convert http req to https (if there is server_name exist && if default_server is not exists)
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
+  
+  # this _ is mean every server_name
+  server_name _;
+
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+  
+  # nothing response (beacuse of default_server exists)
+  return 444;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  
+  server_name esrafil.com;
+  
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+
+  # this code convert http req to https (if there is server_name exist && if default_server is not exists)
+  return 301 https://$host$request_uri;
+}
+
+
+# this is main section
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  
+  server_name esrafil.com;
+  
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+  
+  include h5bp/security/strict-transport-security.conf;
+  include h5bp/basic.conf;
+
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+  location / {
+    proxy_pass http://client-cluster;
+  }
+
+  location /api {
+    limit_req zone=generallimit burst=20 nodelay;
+    limit_req_status 429;
+    proxy_pass http://api-server-cluster;
+  }
+
+  location /public {
+    proxy_pass http://api-server-cluster;
+  }
+}
