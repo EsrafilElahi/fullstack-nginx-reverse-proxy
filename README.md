@@ -2,8 +2,8 @@ nginx reverse proxy </br >
 mern stack </br >
 docker compose 
  
-nginx -c /etc/nginx/nginx.conf -t --> for test nginx syntax
-systemctl start nginx
-systemctl status nginx
-systemctl reload nginx
+nginx -t --> for test nginx syntax </br >
+systemctl start nginx </br >
+systemctl status nginx </br >
+systemctl reload nginx </br >
 systemctl restart nginx
